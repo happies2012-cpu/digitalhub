@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { AlertCircle, Layers } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Pages
 import Landing from '@/pages/Landing';
@@ -29,9 +31,45 @@ import { ProtectedRoute, AdminRoute } from '@/components/auth';
 const queryClient = new QueryClient();
 
 // Get Clerk publishable key from environment
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_placeholder';
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+// Component to display when configuration is missing
+const ConfigurationMissing = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="max-w-md w-full text-center space-y-6">
+      <div className="w-20 h-20 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto">
+        <AlertCircle className="w-10 h-10 text-destructive" />
+      </div>
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">Configuration Required</h1>
+        <p className="text-muted-foreground">
+          The application needs a valid Clerk Publishable Key to start.
+        </p>
+      </div>
+      <div className="p-4 rounded-lg bg-muted text-left font-mono text-sm break-all">
+        VITE_CLERK_PUBLISHABLE_KEY={CLERK_PUBLISHABLE_KEY || 'undefined'}
+      </div>
+      <Button
+        variant="outline"
+        onClick={() => window.location.reload()}
+      >
+        Reload Application
+      </Button>
+    </div>
+  </div>
+);
 
 function App() {
+  // Check if key is missing or is the placeholder
+  if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY.includes('placeholder')) {
+    // If it's a placeholder, we shouldn't crash, but we can't use Clerk.
+    // However, to allow the Landing Page to work (which is public), 
+    // we could conditionally render ClerkProvider only for protected routes?
+    // No, Supabase auth was replaced. We need Clerk for everything now.
+    // So we MUST return the error screen to prompt the user to fix env vars.
+    return <ConfigurationMissing />;
+  }
+
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
       <QueryClientProvider client={queryClient}>
