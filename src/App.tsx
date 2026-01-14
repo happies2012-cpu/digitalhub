@@ -62,7 +62,7 @@ const ConfigurationMissing = () => (
 
 function App() {
   // Check if key is missing or is the placeholder
-  if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY.includes('placeholder')) {
+  if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY.includes('placeholder') || CLERK_PUBLISHABLE_KEY.includes('your_key_here')) {
     // If it's a placeholder, we shouldn't crash, but we can't use Clerk.
     // However, to allow the Landing Page to work (which is public), 
     // we could conditionally render ClerkProvider only for protected routes?
