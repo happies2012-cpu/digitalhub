@@ -125,11 +125,7 @@ const Landing = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-                  <Layers className="w-5 h-5 text-primary-foreground" />
-                </div>
-              </div>
+              <img src="/logo.svg" alt="DigitalHub" className="w-10 h-10" />
               <span className="text-xl font-bold">DigitalHub</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -184,7 +180,7 @@ const Landing = () => {
             </h1>
 
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Manage SEO, social media, ad campaigns, and email marketing from one powerful platform. 
+              Manage SEO, social media, ad campaigns, and email marketing from one powerful platform.
               Stop switching tools. Start growing faster.
             </p>
 
@@ -277,7 +273,7 @@ const Landing = () => {
               Everything You Need to <span className="gradient-text">Dominate</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              One platform to manage your entire digital marketing stack. No more tool-switching, 
+              One platform to manage your entire digital marketing stack. No more tool-switching,
               no more data silos.
             </p>
           </motion.div>
@@ -448,9 +444,7 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-                  <Layers className="w-4 h-4 text-primary-foreground" />
-                </div>
+                <img src="/logo.svg" alt="DigitalHub" className="w-8 h-8 rounded-lg" />
                 <span className="text-lg font-bold">DigitalHub</span>
               </div>
               <p className="text-muted-foreground text-sm">
