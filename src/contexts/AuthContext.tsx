@@ -52,43 +52,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  // If useAuth is used outside provider (e.g. if we missed wrapping something), 
-  // try to fallback to direct Clerk hooks if possible, otherwise throw.
-  // Since we wrapped App with ClerkProvider but NOT AuthProvider from the old context...
-  // WAIT: App.tsx wraps everything in ClerkProvider.
-  // We need to wrap App's children in OUR AuthProvider too if we want this context to work!
+
+  // ALWAYS call hooks at the top level
+  // We need to wrap these in a try/catch or handle the case where we are not in ClerkProvider
+  // However, useUser and useClerk throw if not in ClerkProvider? No, they just return undefined context sometimes or throw.
+  // Actually, standard practice is just to call them. If they fail, they fail. 
+  // But we want to support the case where AuthProvider isn't wrapping but ClerkProvider IS.
+
+  // We can't conditionally call hooks. So we must call them every time.
+  // This assumes useAuth is called inside a ClerkProvider at minimum.
+  const clerkUser = useUser();
+  const clerk = useClerk();
 
   if (context === undefined) {
-    // If we are here, it means the component is NOT wrapped in our new AuthProvider.
-    // However, since we are rewriting AuthContext, we can't easily change App.tsx again without another edit.
-    // But we CAN make useAuth directly use Clerk hooks if context is missing!
-    // This effectively makes the Provider optional if we just want the hooks to work.
+    // Fallback: If not inside <AuthProvider>, try to use the hook values directly
+    // This requires being inside <ClerkProvider>, which we are (in App.tsx)
 
-    // Check if we are inside ClerkProvider (we should be)
-    try {
-      const { user, isLoaded } = useUser();
-      const { signOut } = useClerk();
-
-      return {
-        user: user ? {
-          id: user.id,
-          email: user.primaryEmailAddress?.emailAddress,
-          user_metadata: {
-            full_name: user.fullName,
-            avatar_url: user.imageUrl,
-          }
-        } : null,
-        loading: !isLoaded,
-        signOut: async () => {
-          await signOut();
-        },
-        signUp: async () => ({ error: new Error('Use Clerk components') }),
-        signIn: async () => ({ error: new Error('Use Clerk components') }),
-        signInWithGoogle: async () => ({ error: new Error('Use Clerk components') })
-      };
-    } catch (e) {
+    // Safety check: if clerkUser or clerk failed (unlikely if in ClerkProvider)
+    if (!clerkUser || !clerk) {
       throw new Error('useAuth must be used within ClerkProvider context');
     }
+
+    const { user, isLoaded } = clerkUser;
+    const { signOut } = clerk;
+
+    return {
+      user: user ? {
+        id: user.id,
+        email: user.primaryEmailAddress?.emailAddress,
+        user_metadata: {
+          full_name: user.fullName,
+          avatar_url: user.imageUrl,
+        }
+      } : null,
+      loading: !isLoaded,
+      signOut: async () => {
+        await signOut();
+      },
+      signUp: async () => ({ error: new Error('Use Clerk components') }),
+      signIn: async () => ({ error: new Error('Use Clerk components') }),
+      signInWithGoogle: async () => ({ error: new Error('Use Clerk components') })
+    };
   }
+
   return context;
 };
