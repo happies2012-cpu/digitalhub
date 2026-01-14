@@ -41,3 +41,4 @@ Thumbs.db
 # Scripts (keep them local)
 *.sh
 !scripts/check-env.sh
+.vercel
