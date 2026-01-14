@@ -14,6 +14,7 @@ import {
   TrendingUp,
   BarChart3,
   Target,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ const mainNavItems: NavItem[] = [
 
 const bottomNavItems: NavItem[] = [
   { icon: Users, label: "Clients", href: "/clients" },
+  { icon: CreditCard, label: "Billing", href: "/billing" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
@@ -61,16 +63,14 @@ export function DashboardSidebar() {
               exit={{ opacity: 0 }}
               className="flex items-center gap-2"
             >
-              <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <Target className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <img src="/logo.svg" alt="DigitalHub" className="h-8 w-8" />
               <span className="text-lg font-bold gradient-text">DigitalHub</span>
             </motion.div>
           )}
         </AnimatePresence>
         {collapsed && (
-          <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center mx-auto">
-            <Target className="h-5 w-5 text-primary-foreground" />
+          <div className="flex items-center justify-center mx-auto">
+            <img src="/logo.svg" alt="DigitalHub" className="h-8 w-8" />
           </div>
         )}
       </div>

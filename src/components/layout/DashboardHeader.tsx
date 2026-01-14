@@ -1,9 +1,10 @@
-import { Bell, Search, Plus, User, LogOut, Settings } from "lucide-react";
+import { Search, Plus, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,12 +52,7 @@ export function DashboardHeader() {
           <ThemeToggle />
 
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <NotificationCenter />
 
           {/* Profile */}
           <DropdownMenu>

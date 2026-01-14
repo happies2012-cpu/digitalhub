@@ -18,6 +18,7 @@ import SocialMedia from '@/pages/SocialMedia';
 import EmailMarketing from '@/pages/EmailMarketing';
 import Clients from '@/pages/Clients';
 import Settings from '@/pages/Settings';
+import Billing from '@/pages/Billing';
 import Pricing from '@/pages/Pricing';
 import Checkout from '@/pages/Checkout';
 import PaymentSuccess from '@/pages/PaymentSuccess';
@@ -144,6 +145,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/billing"
+                element={
+                  <ProtectedRoute>
+                    <Billing />
                   </ProtectedRoute>
                 }
               />

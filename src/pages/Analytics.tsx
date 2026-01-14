@@ -1,29 +1,28 @@
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { CampaignPerformance } from "@/components/analytics/CampaignPerformance";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
+  BarChart,
+  Bar,
 } from "recharts";
 import {
   Download,
   Calendar,
-  TrendingUp,
   Users,
   MousePointerClick,
+  TrendingUp,
   DollarSign,
 } from "lucide-react";
 
@@ -147,101 +146,149 @@ const Analytics = () => {
           </motion.div>
         </div>
 
-        {/* Charts */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Traffic Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-2"
-          >
-            <Card variant="elevated">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Traffic by Source</CardTitle>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-primary" />
-                      <span className="text-muted-foreground">Organic</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-secondary" />
-                      <span className="text-muted-foreground">Paid</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-success" />
-                      <span className="text-muted-foreground">Social</span>
+        {/* Charts Container */}
+        <div className="space-y-6">
+          <CampaignPerformance />
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Traffic Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-2"
+            >
+              <Card variant="elevated">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Traffic by Source</CardTitle>
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-primary" />
+                        <span className="text-muted-foreground">Organic</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-secondary" />
+                        <span className="text-muted-foreground">Paid</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-success" />
+                        <span className="text-muted-foreground">Social</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={trafficData}>
-                      <defs>
-                        <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(190, 95%, 55%)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="hsl(190, 95%, 55%)" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="colorPaid" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(260, 80%, 60%)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="hsl(260, 80%, 60%)" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="colorSocial" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 40%, 16%)" />
-                      <XAxis dataKey="name" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
-                      <YAxis stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(222, 47%, 8%)",
-                          border: "1px solid hsl(222, 40%, 16%)",
-                          borderRadius: "0.75rem",
-                          color: "hsl(210, 40%, 98%)",
-                        }}
-                      />
-                      <Area type="monotone" dataKey="organic" stroke="hsl(190, 95%, 55%)" strokeWidth={2} fillOpacity={1} fill="url(#colorOrganic)" />
-                      <Area type="monotone" dataKey="paid" stroke="hsl(260, 80%, 60%)" strokeWidth={2} fillOpacity={1} fill="url(#colorPaid)" />
-                      <Area type="monotone" dataKey="social" stroke="hsl(160, 70%, 45%)" strokeWidth={2} fillOpacity={1} fill="url(#colorSocial)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={trafficData}>
+                        <defs>
+                          <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(190, 95%, 55%)" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(190, 95%, 55%)" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="colorPaid" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(260, 80%, 60%)" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(260, 80%, 60%)" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="colorSocial" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 40%, 16%)" />
+                        <XAxis dataKey="name" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "hsl(222, 47%, 8%)",
+                            border: "1px solid hsl(222, 40%, 16%)",
+                            borderRadius: "0.75rem",
+                            color: "hsl(210, 40%, 98%)",
+                          }}
+                        />
+                        <Area type="monotone" dataKey="organic" stroke="hsl(190, 95%, 55%)" strokeWidth={2} fillOpacity={1} fill="url(#colorOrganic)" />
+                        <Area type="monotone" dataKey="paid" stroke="hsl(260, 80%, 60%)" strokeWidth={2} fillOpacity={1} fill="url(#colorPaid)" />
+                        <Area type="monotone" dataKey="social" stroke="hsl(160, 70%, 45%)" strokeWidth={2} fillOpacity={1} fill="url(#colorSocial)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          {/* Channel Breakdown */}
+            {/* Channel Breakdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card variant="elevated">
+                <CardHeader>
+                  <CardTitle>Channel Breakdown</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[200px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={channelData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={4}
+                          dataKey="value"
+                        >
+                          {channelData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "hsl(222, 47%, 8%)",
+                            border: "1px solid hsl(222, 40%, 16%)",
+                            borderRadius: "0.75rem",
+                            color: "hsl(210, 40%, 98%)",
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {channelData.map((channel) => (
+                      <div key={channel.name} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="h-3 w-3 rounded-full" style={{ backgroundColor: channel.color }} />
+                          <span className="text-muted-foreground">{channel.name}</span>
+                        </div>
+                        <span className="font-medium">{channel.value}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Conversions Chart */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.4 }}
           >
             <Card variant="elevated">
               <CardHeader>
-                <CardTitle>Channel Breakdown</CardTitle>
+                <CardTitle>Conversions & Revenue</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-[200px]">
+                <div className="h-[250px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={channelData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={4}
-                        dataKey="value"
-                      >
-                        {channelData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
+                    <BarChart data={conversionData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 40%, 16%)" />
+                      <XAxis dataKey="name" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis yAxisId="left" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis yAxisId="right" orientation="right" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value / 1000}k`} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(222, 47%, 8%)",
@@ -250,59 +297,15 @@ const Analytics = () => {
                           color: "hsl(210, 40%, 98%)",
                         }}
                       />
-                    </PieChart>
+                      <Bar yAxisId="left" dataKey="conversions" fill="hsl(190, 95%, 55%)" radius={[4, 4, 0, 0]} />
+                      <Bar yAxisId="right" dataKey="revenue" fill="hsl(260, 80%, 60%)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
-                </div>
-                <div className="mt-4 space-y-2">
-                  {channelData.map((channel) => (
-                    <div key={channel.name} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: channel.color }} />
-                        <span className="text-muted-foreground">{channel.name}</span>
-                      </div>
-                      <span className="font-medium">{channel.value}%</span>
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>
           </motion.div>
         </div>
-
-        {/* Conversions Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card variant="elevated">
-            <CardHeader>
-              <CardTitle>Conversions & Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={conversionData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(222, 40%, 16%)" />
-                    <XAxis dataKey="name" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis yAxisId="left" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis yAxisId="right" orientation="right" stroke="hsl(215, 20%, 55%)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value / 1000}k`} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(222, 47%, 8%)",
-                        border: "1px solid hsl(222, 40%, 16%)",
-                        borderRadius: "0.75rem",
-                        color: "hsl(210, 40%, 98%)",
-                      }}
-                    />
-                    <Bar yAxisId="left" dataKey="conversions" fill="hsl(190, 95%, 55%)" radius={[4, 4, 0, 0]} />
-                    <Bar yAxisId="right" dataKey="revenue" fill="hsl(260, 80%, 60%)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </DashboardLayout>
   );

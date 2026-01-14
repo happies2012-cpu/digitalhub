@@ -6,6 +6,9 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { ChatWidget } from "@/components/support/ChatWidget";
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
@@ -14,6 +17,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <DashboardHeader />
         <main className="p-6">{children}</main>
       </div>
+      <OnboardingWizard />
+      <ChatWidget />
     </div>
   );
 }
