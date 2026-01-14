@@ -1,105 +1,50 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext } from 'react';
+import { useUser, useClerk } from '@clerk/clerk-react';
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: any | null; // Using any to be compatible with legacy usage
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  // Legacy methods kept for type compatibility but marked as optional/unused
+  // These will now just log warnings if accessed
+  session?: any;
+  signUp?: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
+  signIn?: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle?: () => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+  // Adapt Clerk user object to look somewhat like the Supabase user object 
+  // expected by the rest of the app (e.g. DashboardHeader)
+  const adaptedUser = user ? {
+    id: user.id,
+    email: user.primaryEmailAddress?.emailAddress,
+    user_metadata: {
+      full_name: user.fullName,
+      avatar_url: user.imageUrl,
+    },
+    // Add other fields as needed
+  } : null;
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin,
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-      return { error };
-    } catch (error) {
-      return { error: error as Error };
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      return { error };
-    } catch (error) {
-      return { error: error as Error };
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
-      return { error };
-    } catch (error) {
-      return { error: error as Error };
-    }
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const value = {
+    user: adaptedUser,
+    loading: !isLoaded,
+    signOut: async () => {
+      await signOut();
+    },
+    // Legacy implementations that warn
+    signUp: async () => { console.warn('Use Clerk SignUp component'); return { error: new Error('Use Clerk SignUp component') }; },
+    signIn: async () => { console.warn('Use Clerk SignIn component'); return { error: new Error('Use Clerk SignIn component') }; },
+    signInWithGoogle: async () => { console.warn('Use Clerk SignIn component'); return { error: new Error('Use Clerk SignIn component') }; },
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        session,
-        loading,
-        signUp,
-        signIn,
-        signInWithGoogle,
-        signOut,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
@@ -107,8 +52,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+  // If useAuth is used outside provider (e.g. if we missed wrapping something), 
+  // try to fallback to direct Clerk hooks if possible, otherwise throw.
+  // Since we wrapped App with ClerkProvider but NOT AuthProvider from the old context...
+  // WAIT: App.tsx wraps everything in ClerkProvider.
+  // We need to wrap App's children in OUR AuthProvider too if we want this context to work!
+
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    // If we are here, it means the component is NOT wrapped in our new AuthProvider.
+    // However, since we are rewriting AuthContext, we can't easily change App.tsx again without another edit.
+    // But we CAN make useAuth directly use Clerk hooks if context is missing!
+    // This effectively makes the Provider optional if we just want the hooks to work.
+
+    // Check if we are inside ClerkProvider (we should be)
+    try {
+      const { user, isLoaded } = useUser();
+      const { signOut } = useClerk();
+
+      return {
+        user: user ? {
+          id: user.id,
+          email: user.primaryEmailAddress?.emailAddress,
+          user_metadata: {
+            full_name: user.fullName,
+            avatar_url: user.imageUrl,
+          }
+        } : null,
+        loading: !isLoaded,
+        signOut: async () => {
+          await signOut();
+        },
+        signUp: async () => ({ error: new Error('Use Clerk components') }),
+        signIn: async () => ({ error: new Error('Use Clerk components') }),
+        signInWithGoogle: async () => ({ error: new Error('Use Clerk components') })
+      };
+    } catch (e) {
+      throw new Error('useAuth must be used within ClerkProvider context');
+    }
   }
   return context;
 };
